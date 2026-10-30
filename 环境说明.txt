@@ -1,0 +1,40 @@
+项目环境说明
+============
+
+一、实测运行环境
+----------------
+操作系统：Windows 10 (10.0.26200)
+Python：3.11.4 (Anaconda)
+numpy：1.24.3
+pandas：1.5.3
+scipy：1.10.1
+scikit-learn：1.3.0
+matplotlib：3.7.1
+openpyxl：3.0.10
+networkx：3.1
+joblib：1.2.0
+
+二、一键复现
+------------------
+在目标电脑上：
+
+1. 安装 Python 3.11 64-bit（或 Anaconda/Miniconda，Python 3.11）；
+2. 双击 `install_env.bat`；
+3. 双击 `run.bat` 即可。
+
+`install_env.bat` 会创建项目内 `.venv`，并用
+`pip install --no-index --find-links=wheels -r requirements.txt`
+
+如果目标电脑已装 Anaconda，也可以用：
+
+    conda env create -f environment.yml
+    conda activate beer-flavor
+    python run_all.py
+
+注意：`wheels/` 中的 wheel 只适用于 Windows 64-bit + Python 3.11；
+如果换到 macOS/Linux 或别的 Python 版本，请联网执行
+`pip install -r requirements.txt`，或重新生成对应平台的 wheel。
+
+三、运行日志
+------------
+项目根目录的 reproduce.log 由 run_all.py 每次运行时覆盖写入。

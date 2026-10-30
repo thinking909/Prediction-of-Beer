@@ -1,0 +1,217 @@
+Python: C:\Users\zhouhanrui\Desktop\数模\.venv\Scripts\python.exe
+Project: C:\Users\zhouhanrui\Desktop\数模
+Stages: ['clean', 'q1', 'q2', 'q3']
+[1.csv] 重命名 231 列；保留原始缺失 73 处（9 列），另存缺失掩码
+[2.csv] 首列 Unnamed:0 -> 'chemical'；希腊字母统一为 ASCII（如 α->Alpha, β->Beta）
+[3.xlsx] 品评表为空白模板，原样复制
+[4.csv] 重命名 50 个感官列（缩写 -> CleanName_PanelFeedback 规范名）
+[5.csv] 首列 Unnamed:0 -> 'sensory_descriptor'；修复 'Overall appreciation' 表头换行符
+[6.csv] 首列 Unnamed:0 -> 'chemical'；修复感官列表头换行符
+[7.csv] 删除 3 个全空列：['palate_acetaldehyde', 'palate_acetate', 'palate_dentist']
+[8.xlsx] 'Calibrated chemical dataset' 工作表化学列名已规范
+[8.xlsx] 已另存为 8_其他相关数据.xlsx（其余工作表保持不变）
+
+===== 全部完成 =====
+输出目录： C:\Users\zhouhanrui\Desktop\数模\附件\清洗后
+{
+  "总列数": 231,
+  "判定分布": {
+    "log10": 182,
+    "raw": 33,
+    "semi_quant": 15,
+    "unresolved_sum": 1
+  },
+  "E1门检(37列10^x vs 校准集最大中位相对误差)": 6.964807057561175e-10,
+  "log10列数(还原为10^x)": 182,
+  "raw列数(保持原值)": 33,
+  "半定量/未决列(保持原值)": [
+    "N-pentanol",
+    "2-methyl-1-butanol",
+    "Isopentyl formate",
+    "3-methyl-2-butenal",
+    "3-methyl-2-hexanol",
+    "3-furanmethanol",
+    "N-heptanol",
+    "Ethyl 3-hexanoate",
+    "N-octanol",
+    "Terpinolene",
+    "2-nonanol",
+    "Isoborneol",
+    "Ethyl benzoate",
+    "Trans-dihydro-Alpha-terpinyl acetate",
+    "E-Beta-ionone",
+    "Total hop aroma compounds"
+  ],
+  "半定量列说明": "15列为未校准HS-SPME-GC-MS相对峰面积(内标归一化, 任意单位), 本就未做log变换, 无需还原; 不参与阈值比较; 1列(Total hop aroma)为派生加和且构成未确证",
+  "校准浓度说明": "仅70个'Calibrated chemical dataset'列有绝对浓度; 其余列的10^x还原值为相对量/未校准单位, 论文引用时需注明",
+  "缺失说明": "清洗表保留原始缺失(NaN), 不做全样本事前填补; 建模在训练折内以中位数插补",
+  "酒花香气加和核查_r(log10成员和, 派生列)": 0.4871
+}
+=== P0-1 单位表 ===
+总列数: 231 | 绝对/相对分布: {'相对': 157, '绝对': 70, '派生': 4}
+绝对列中有单位标注: 68 / 70
+绝对列中可做阈值判定: 43
+
+=== P0-2 派生列核查 ===
+                      派生列     相对残差              判定
+              Total acids 0.002922  成员可复原(残差<0.5%)
+    Total ester compounds 0.000804  成员可复原(残差<0.5%)
+   Total sulfur compounds 0.000633  成员可复原(残差<0.5%)
+Total hop aroma compounds 0.160128 无法复原(成员缺失或尺度不符)
+            Caloric value 0.008382           部分可复原
+  Total acids: Acetic acid×6.897;Lactic acid×0.0025
+  Total ester compounds: Isoamyl acetate×1.668;Ethyl acetate×0.04338;Ethyl octanoate×1.343;Ethyl hexanoate×4.429;Ethyl 3-methylbutyrate×10.04;Phenethyl acetate×0.7735;Ethyl decanoate×0.9523;Ethyl propionate×0.1026
+  Total sulfur compounds: Hydrogen sulfide×0.2859;Dimethyl sulfide×0.05259;Diethyl sulfide×0.8338;Sulfur dioxide×0.09005;Carbon disulfide×0.02082
+  Total hop aroma compounds: pH×0.3236;Linalool×0.07375;Geraniol×0.547;Ethyl octanoate×0.315;Alpha-terpineol×0.09323;Amyl acetate×8.285;Isobutanol×0.01314;4-vinylguaiacol×0.7954
+  Caloric value: Ethanol×5.531;Protein×0.358;Unfermentables×0.4046;Sugars×0.4026;Lactic acid×0.0003058;Color×0.00367
+
+异常最集中的样本(前8):
+ beer  远超单元数                                                                                                                      涉及列
+    9     23 2-ethyl-3-methylpyrazine, 2-methyltetrahydrofuran-3-one, 3-methylbutanal, 5-methylfurfural, Alpha-humulene, Benzaldehyde
+    5     19                   2-ethyl-3-methylpyrazine, 5-methylfurfural, Alpha-humulene, Benzaldehyde, Caryophyllene, Cis-3-hexenol
+   34     18  2-ethyl-3-methylpyrazine, 2-methyltetrahydrofuran-3-one, 3-methylbutanal, Alpha-humulene, Benzyl alcohol, Caryophyllene
+  130     17  2-ethyl-3-methylpyrazine, 2-methyltetrahydrofuran-3-one, 5-methylfurfural, Alpha-humulene, Benzaldehyde, Benzyl alcohol
+  181     17   2-ethyl-3-methylpyrazine, 2-methyltetrahydrofuran-3-one, 5-methylfurfural, Alpha-humulene, Benzaldehyde, Caryophyllene
+  177     17               2-methyltetrahydrofuran-3-one, Alpha-humulene, Alpha-terpineol, Benzyl alcohol, Caryophyllene, Citronellol
+  158     14                 2-methyltetrahydrofuran-3-one, Alpha-humulene, Benzaldehyde, Caryophyllene, Diacetyl, E-Beta-damascenone
+   67     13                 2-ethyl-3-methylpyrazine, 5-methylfurfural, Benzaldehyde, Caryophyllene, E,E-2,4-decadienal, E-2-nonenal
+
+=== P0-3 异常值审计(Tukey远超 Q3+3IQR + 稳健z 分级) ===
+远超单元总数: 561 | 存在远超的列: 45/231
+                           列名  n_Tukey远超     最大|z| 异常beer  还原后max/median  最大取值占比
+                     Linalool         34     78.45    214         87.652   0.012
+                      Eugenol         31   3113.81    177       2416.783   0.004
+                Caryophyllene         31  37579.10    177      41565.522   0.004
+           E-Beta-damascenone         28  18346.25    151      10522.441   0.008
+                  Lactic acid         28      9.16     82         51.895   0.016
+2-methyltetrahydrofuran-3-one         23 266798.38    156     238297.662   0.004
+                  E-2-nonenal         22   1086.35      5       1244.573   0.008
+           E,E-2,4-decadienal         21    157.48     34        216.179   0.008
+                  Citronellol         18     50.07    219         54.529   0.008
+               Benzyl alcohol         18     76.51    220        110.827   0.024
+            Gamma-nonalactone         18  25551.00    181      17021.311   0.008
+                  Z-nerolidol         17    297.61      9        276.365   0.008
+
+可信极端(还原max/median>100):
+                           列名  beer          还原值  还原max/median  尺度类别
+2-methyltetrahydrofuran-3-one   156 1.259643e+04     238297.66   raw
+               E-Alpha-ionone   247 2.953665e+08      67949.41 log10
+                Caryophyllene   177 4.092666e+01      41565.52   raw
+            Gamma-nonalactone   181 7.256136e+03      17021.31   raw
+           E-Beta-damascenone   151 5.991013e+03      10522.44   raw
+                Caryophyllene     9 9.837583e+00       9991.15   raw
+               E-Alpha-ionone   184 3.420908e+07       7869.84 log10
+            Gamma-nonalactone   130 2.505767e+03       5877.98   raw
+                Caryophyllene     5 5.770453e+00       5860.53   raw
+                Caryophyllene   247 5.394686e+00       5478.90   raw
+                Caryophyllene    34 5.329455e+00       5412.65   raw
+            Gamma-nonalactone    67 2.283958e+03       5357.67   raw
+            Gamma-nonalactone     9 2.274379e+03       5335.20   raw
+            Gamma-nonalactone     5 2.199624e+03       5159.84   raw
+                Caryophyllene   181 4.711649e+00       4785.20   raw
+
+还原后绝对列负值数(应为0): 0
+
+=== 附: 缺陷化合物超阈统计(校准列, 可与阈值比较) ===
+             化学列     感官指标   单位      阈值均值  超阈样本数  超阈比例         浓度范围
+Dimethyl sulfide      dms ug/L 17.250000    168 67.2%     1.11~520
+        Diacetyl diacetyl mg/L  0.299250    112 46.5%  5.9e-08~122
+ 4-vinylguaiacol     X4vg mg/L  0.206333     16  6.4% 0.0097~0.685
+
+报告已写出: 预处理补充报告.json
+评论列总数: 183 | 层级分布: {'推断-高': 76, '官方': 57, '官方(同描述符跨面)': 24, '推断-中': 18, '无对应': 5, '推断-低': 3}
+覆盖专业列: 48 / 50
+无评论对应的专业列: ['Body', 'Overall appreciation (Trained panel)']
+
+官方映射明细:
+        评论列(7.csv)                对应专业列(4.csv)                                                                  依据/备注
+  aroma_aftertaste                  Aftertaste                                           官方单属性配对 CleanName=aftertaste
+     aroma_alcohol                     Alcohol                                              官方单属性配对 CleanName=alcohol
+      aroma_banana       Esters aroma - banana                                   CleanName=Esters - banana; Fig3 验证配对
+    aroma_barnyard                    Barnyard                                             官方单属性配对 CleanName=barnyard
+      aroma_bitter                  Bitterness                                               官方单属性配对 CleanName=bitter
+       aroma_bread          Malt aroma - bread                                                 CleanName=Malt - bread
+     aroma_buttery                    Diacetyl                                          CleanName=Diacetyl; Fig3 验证配对
+     aroma_caramel        Malt aroma - caramel                                               CleanName=Malt - caramel
+ aroma_carbonation                 Carbonation                                          官方单属性配对 CleanName=carbonation
+      aroma_citrus         Hops aroma - citrus                                                CleanName=Hops - citrus
+       aroma_clove            4-vinyl guaiacol                                  CleanName=4-vinyl guaiacol; Fig3 验证配对
+   aroma_coriander                   Coriander                                         CleanName=Coriander; Fig3 验证配对
+        aroma_corn            Dimethyl sulfide                                                 官方单属性配对 CleanName=corn
+      aroma_estery      Esters aroma - overall                                  CleanName=Esters - overall; Fig3 验证配对
+      aroma_flower       Esters aroma - floral                                              CleanName=Esters - floral
+      aroma_fruity  Esters aroma - nail polish CleanName=Esters - nail polish; 注意: 论文将fruity归到 nail polish(溶剂), 属官方原样
+      aroma_grainy          Malt aroma - grain                                                 CleanName=Malt - grain
+       aroma_grass         Hops aroma - grassy                                                CleanName=Hops - grassy
+       aroma_hoppy        Hops aroma - overall                                    CleanName=Hops - overall; Fig3 验证配对
+        aroma_malt        Malt aroma - overall                                    CleanName=Malt - overall; Fig3 验证配对
+    aroma_metallic                    Metallic                                             官方单属性配对 CleanName=metallic
+        aroma_pear       Esters aroma - fruity                                              CleanName=Esters - fruity
+       aroma_smoky         Malt aroma - smoked                                                CleanName=Malt - smoked
+        aroma_sour                     Acidity                                                 官方单属性配对 CleanName=sour
+       aroma_sweet                   Sweetness                                                官方单属性配对 CleanName=sweet
+    aroma_tropical Hops aroma - tropical fruit                             CleanName=Hops - tropical fruit; Fig3 验证配对
+       aroma_woody          Hops aroma - woody                                                 CleanName=Hops - woody
+ palate_aftertaste                  Aftertaste                                        CleanName=Aftertaste; Fig3 验证配对
+    palate_alcohol                     Alcohol                                              官方单属性配对 CleanName=alcohol
+     palate_banana       Esters taste - banana                                         官方 taste 侧配对; palate列按taste侧归并
+   palate_barnyard                    Barnyard                                             官方单属性配对 CleanName=barnyard
+     palate_bitter                  Bitterness                                               官方单属性配对 CleanName=bitter
+      palate_bread          Malt taste - bread                                         官方 taste 侧配对; palate列按taste侧归并
+    palate_buttery                    Diacetyl                                              官方单属性配对 CleanName=buttery
+    palate_caramel        Malt taste - caramel                                         官方 taste 侧配对; palate列按taste侧归并
+palate_carbonation                 Carbonation                                       CleanName=Carbonation; Fig3 验证配对
+     palate_citrus         Hops taste - citrus                                         官方 taste 侧配对; palate列按taste侧归并
+      palate_clove            4-vinyl guaiacol                                                官方单属性配对 CleanName=clove
+  palate_coriander                   Coriander                                            官方单属性配对 CleanName=coriander
+       palate_corn            Dimethyl sulfide                                                 官方单属性配对 CleanName=corn
+     palate_estery      Esters taste - overall                                         官方 taste 侧配对; palate列按taste侧归并
+     palate_flower       Esters taste - floral                                         官方 taste 侧配对; palate列按taste侧归并
+     palate_fruity  Esters taste - nail polish 官方 taste 侧配对; palate列按taste侧归并; 注意: 论文将fruity归到 nail polish(溶剂), 属官方原样
+     palate_grainy          Malt taste - grain                                         官方 taste 侧配对; palate列按taste侧归并
+      palate_grass         Hops taste - grassy                                         官方 taste 侧配对; palate列按taste侧归并
+      palate_hoppy        Hops taste - overall                                         官方 taste 侧配对; palate列按taste侧归并
+       palate_malt        Malt taste - overall                                         官方 taste 侧配对; palate列按taste侧归并
+   palate_metallic                    Metallic                                             官方单属性配对 CleanName=metallic
+       palate_pear       Esters taste - fruity                                         官方 taste 侧配对; palate列按taste侧归并
+      palate_smoky         Malt taste - smoked                                         官方 taste 侧配对; palate列按taste侧归并
+       palate_sour                     Acidity                                                 官方单属性配对 CleanName=sour
+      palate_sweet                   Sweetness                                                官方单属性配对 CleanName=sweet
+   palate_tropical Hops taste - tropical fruit                                         官方 taste 侧配对; palate列按taste侧归并
+      palate_woody          Hops taste - woody                                         官方 taste 侧配对; palate列按taste侧归并
+  taste_aftertaste                  Aftertaste                                           官方单属性配对 CleanName=aftertaste
+     taste_alcohol                     Alcohol                                           CleanName=Alcohol; Fig3 验证配对
+      taste_banana       Esters taste - banana                                              CleanName=Esters - banana
+    taste_barnyard                    Barnyard                                                     CleanName=Barnyard
+      taste_bitter                  Bitterness                                        CleanName=Bitterness; Fig3 验证配对
+       taste_bread          Malt taste - bread                                                 CleanName=Malt - bread
+     taste_buttery                    Diacetyl                                              官方单属性配对 CleanName=buttery
+     taste_caramel        Malt taste - caramel                                    CleanName=Malt - caramel; Fig3 验证配对
+ taste_carbonation                 Carbonation                                          官方单属性配对 CleanName=carbonation
+      taste_citrus         Hops taste - citrus                                                CleanName=Hops - citrus
+       taste_clove            4-vinyl guaiacol                                                官方单属性配对 CleanName=clove
+   taste_coriander                   Coriander                                            官方单属性配对 CleanName=coriander
+        taste_corn            Dimethyl sulfide                                             CleanName=Dimethyl sulfide
+      taste_estery      Esters taste - overall                                  CleanName=Esters - overall; Fig3 验证配对
+      taste_flower       Esters taste - floral                                              CleanName=Esters - floral
+      taste_fruity  Esters taste - nail polish CleanName=Esters - nail polish; 注意: 论文将fruity归到 nail polish(溶剂), 属官方原样
+      taste_grainy          Malt taste - grain                                                 CleanName=Malt - grain
+       taste_grass         Hops taste - grassy                                                CleanName=Hops - grassy
+       taste_hoppy        Hops taste - overall                                    CleanName=Hops - overall; Fig3 验证配对
+        taste_malt        Malt taste - overall                                    CleanName=Malt - overall; Fig3 验证配对
+    taste_metallic                    Metallic                                                     CleanName=Metallic
+        taste_pear       Esters taste - fruity                                              CleanName=Esters - fruity
+       taste_smoky         Malt taste - smoked                                                CleanName=Malt - smoked
+        taste_sour                     Acidity                                           CleanName=Acidity; Fig3 验证配对
+       taste_sweet                   Sweetness                                         CleanName=Sweetness; Fig3 验证配对
+    taste_tropical Hops taste - tropical fruit                                        CleanName=Hops - tropical fruit
+       taste_woody          Hops taste - woody                                                 CleanName=Hops - woody
+
+未映射/无对应:
+        评论列(7.csv) 映射层级
+aroma_acetaldehyde  无对应
+       aroma_apple  无对应
+      palate_apple  无对应
+taste_acetaldehyde  无对应
+       taste_apple  无对应
+cols 45 units 561 | beers 160 units 561
